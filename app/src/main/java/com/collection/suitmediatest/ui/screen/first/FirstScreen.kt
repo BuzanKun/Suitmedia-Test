@@ -4,21 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,43 +22,49 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.collection.suitmediatest.R
+import com.collection.suitmediatest.components.CustomBasicDialog
 import com.collection.suitmediatest.components.CustomButton
 import com.collection.suitmediatest.components.CustomTextField
 
 @Composable
 fun FirstScreen(
+    navController: NavController,
     viewModel: FirstScreenViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (uiState.showCheckDialog) {
         val checkResult = if (uiState.isPalindrome == true) {
-            " is a Palindrome"
+            "${uiState.palindrome} is a Palindrome"
         } else {
-            " is NOT a Palindrome"
+            "${uiState.palindrome} is NOT a Palindrome"
         }
 
-        Dialog(
-            onDismissRequest = { viewModel.onEvent(FirstScreenEvent.OnCheckDialogDismissed) }
-        ) {
-            Card(
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .widthIn(max = 280.dp)
-                        .padding(16.dp),
-                ) {
-                    Text(
-                        text = uiState.palindrome
-                    )
-                    Text(
-                        text = checkResult
-                    )
+        CustomBasicDialog(
+            onDismissRequest = { viewModel.onEvent(FirstScreenEvent.OnCheckDialogDismissed) },
+            text = checkResult,
+            icon = R.drawable.info_outline_24
+        )
+    }
+
+    if (uiState.showErrorDialog) {
+        CustomBasicDialog(
+            onDismissRequest = { viewModel.onEvent(FirstScreenEvent.OnNextErrorDismissed) },
+            text = "Please fill your name",
+            icon = R.drawable.error_outline_24
+        )
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.navigationEvents.collect { event ->
+            when (event) {
+                is NavigationEvent.NavigateToSecondScreen -> {
+                    navController.navigate("second/${event.name}")
                 }
             }
         }
@@ -127,5 +129,5 @@ fun FirstScreen(
 @Preview
 @Composable
 private fun FirstScreenPreview() {
-    FirstScreen()
+    FirstScreen(navController = rememberNavController())
 }
