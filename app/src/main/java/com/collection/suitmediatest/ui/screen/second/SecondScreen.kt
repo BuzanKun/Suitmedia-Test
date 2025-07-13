@@ -34,13 +34,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.collection.suitmediatest.R
 import com.collection.suitmediatest.components.CustomButton
+import com.collection.suitmediatest.navigation.Screens
 import com.collection.suitmediatest.ui.theme.Teal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondScreen(
     navController: NavController,
-    name: String
+    name: String,
+    selectedUsername: String?
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -100,13 +102,15 @@ fun SecondScreen(
                 }
             }
             Text(
-                text = "Selected User Name",
+                text = selectedUsername ?: "Selected User Name",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
             )
             CustomButton(
                 text = "Choose a User",
-                onClick = {},
+                onClick = {
+                    navController.navigate(Screens.ThirdScreen.route)
+                },
             )
         }
     }
@@ -117,6 +121,7 @@ fun SecondScreen(
 private fun SecondScreenPreview() {
     SecondScreen(
         navController = rememberNavController(),
-        name = "Buzank"
+        name = "Rizky",
+        selectedUsername = "Buzank"
     )
 }

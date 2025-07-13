@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.collection.suitmediatest.navigation.Screens
 import com.collection.suitmediatest.ui.screen.first.FirstScreen
 import com.collection.suitmediatest.ui.screen.second.SecondScreen
+import com.collection.suitmediatest.ui.screen.third.ThirdScreen
 import com.collection.suitmediatest.ui.theme.SuitmediaTestTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,10 +42,17 @@ fun SuitmediaTestApp(
 
         composable(route = Screens.SecondScreen.route) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: "Guest"
+            val selectedUsername = backStackEntry.savedStateHandle.get<String>("selected_username")
+
             SecondScreen(
                 navController = navController,
-                name = name
+                name = name,
+                selectedUsername = selectedUsername
             )
+        }
+
+        composable(route = Screens.ThirdScreen.route) {
+            ThirdScreen(navController = navController)
         }
     }
 }
